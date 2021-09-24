@@ -1,6 +1,5 @@
-from collections import deque
+
 from timeit import default_timer as timer
-import numpy as np
 
 
 class AI_Node():
@@ -28,9 +27,6 @@ class AI_Node():
             else:
                 self.rightChild = node
 
-    def generate_children(self,state):
-        newNode  = AI_Node(self.id+1 ,"a",0,1,state)
-        self.insert(newNode)
     # check goal of the 2d array if any elements are not a match return false if they match keep going
     def check_goal(self, state):
         if self:
@@ -62,6 +58,7 @@ class AI_Node():
                         if node.rightChild:
                             queue.append(node.rightChild)
                             visited.append(node.rightChild.id)
+
     # DFS using stack
     def DFS(self, goal):
         stack = []
@@ -131,7 +128,9 @@ class AI_Node():
 
 class AI_Tree:
     def __init__(self):
+        self.counter = 1
         self.root = None
+
 
     def getID(self, id):
         node = self.root.find(id)
@@ -179,8 +178,10 @@ class AI_Tree:
     def findChildern(self, goal):
         return self.root.findChildern(goal)
 
-    def generate_children(self,state):
-        self.root.generate_children(state)
+    def generate_children(self, state):
+        idNum =1+self.counter
+        self.counter+=1
+        self.insert(idNum, "name", 0, 1, state)
 
 
 tree = AI_Tree()
@@ -192,9 +193,9 @@ state1 = [
 ]
 
 goalState = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 0],
 ]
 
 state2 = [
@@ -214,11 +215,10 @@ state4 = [
 ]
 
 tree.insert(1, "k", 0, 1, state1)
-tree.insert(2, "a", 0, 2, state2)
-tree.insert(-2, "a", 0, 2, goalState)
-tree.insert(3, "b", 0, 3, state3)
-tree.insert(-5, "b", 0, 3, state3)
-tree.insert(4, "c", 0, 4, state3)
+tree.generate_children(goalState)
+tree.generate_children(state2)
+tree.generate_children(state2)
+tree.generate_children(state2)
 
 start = timer()
 (id, path) = tree.BFS(goalState)
