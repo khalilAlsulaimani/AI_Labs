@@ -1,8 +1,23 @@
-
 from timeit import default_timer as timer
 
 
-class AI_Node():
+def findZero(state):
+    for row in range(len(state)):
+        for column in range(len(state)):
+            if state[row][column] == 0:
+                return row, column
+
+
+def swap(state, x1, y1, x2, y2):
+    print(x1, y1, x2, y2)
+    temp_puz = state
+    temp = temp_puz[x2][y2]
+    temp_puz[x2][y2] = temp_puz[x1][y1]
+    temp_puz[x1][y1] = temp
+    return temp_puz
+
+
+class AI_Node:
 
     def __init__(self, id, name, status, cost, state):
         self.name = name
@@ -13,6 +28,7 @@ class AI_Node():
         self.root = None
         self.leftChild = None
         self.rightChild = None
+        self.nodeCount = 1
 
     def insert(self, node):
         if self.id > node.id:
@@ -38,26 +54,87 @@ class AI_Node():
                         return False
             return True
 
+    def makeCopyList(self, state, newList):
+        newList = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+        ]
+        for row in range(len(state)):
+            for column in range((len(state))):
+                newList[row][column] = state[row][column]
+
+        return newList
+
+    def up(self, state, x, y):
+        childState = swap(state, x, y, x - 1, y)
+        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        return childState
+
+    def down(self, state, x, y):
+        childState = swap(state, x, y, x + 1, y)
+        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        return childState
+
+    def right(self, state, x, y):
+        childState = swap(state, 2, 1, 2, 2)
+        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        return childState
+
+    def left(self, state, x, y):
+        childState = swap(state, x, y, x, y - 1)
+        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        return childState
+
+    def generate_children(self, state):
+        (x, y) = findZero(state)
+        children = []
+
+        stateList1 = []
+        stateList1 = self.makeCopyList(state, stateList1)
+
+        stateList2 = []
+        stateList2 = self.makeCopyList(state, stateList2)
+
+        stateList3 = []
+        stateList3 = self.makeCopyList(state, stateList3)
+
+        stateList4 = []
+        stateList4 = self.makeCopyList(state, stateList4)
+
+        stateStorage = [stateList1, stateList2, stateList3, stateList4]
+
+        if x + 1 < 3:
+            children.append(self.down(stateStorage[0], x, y))
+
+        if x - 1 > -1:
+            children.append(self.up(stateStorage[1], x, y))
+
+        if y - 1 > -1:
+            children.append(self.left(stateStorage[2], x, y))
+
+        if y + 1 < 3:
+            children.append(self.right(stateStorage[3], x, y))
+
+        return children
+
     # BFS using queue and recursion
     def BFS(self, goal):
         queue = []
         visited = []
-        if self and (self.id not in visited):
+        if self:
             queue.append(self)
-            visited.append(self.id)
             while len(queue) > 0:
                 # print(stack.__len__())
                 node = queue.pop(0)
                 if node is not None:
-                    if node.check_goal(goal):
-                        return node.id, visited.__str__()
-                    else:
-                        if node.leftChild:
-                            queue.append(node.leftChild)
-                            visited.append(node.leftChild.id)
-                        if node.rightChild:
-                            queue.append(node.rightChild)
-                            visited.append(node.rightChild.id)
+                    if node.state is not None:
+                        if node.state not in visited:
+                            if node.check_goal(goal):
+                                return node.state ,visited.__str__()
+                            else:
+                                visited.append(node.state)
+                                queue.append(node.generate_children(node.state))
 
     # DFS using stack
     def DFS(self, goal):
@@ -116,7 +193,6 @@ class AI_Node():
 
     # using the find to retrieve its left and right children if they exist
     def findChildern(self, root):
-
         parent = self.find(root)
         children = []
         if parent.leftChild:
@@ -130,7 +206,6 @@ class AI_Tree:
     def __init__(self):
         self.counter = 1
         self.root = None
-
 
     def getID(self, id):
         node = self.root.find(id)
@@ -178,11 +253,6 @@ class AI_Tree:
     def findChildern(self, goal):
         return self.root.findChildern(goal)
 
-    def generate_children(self, state):
-        idNum =1+self.counter
-        self.counter+=1
-        self.insert(idNum, "name", 0, 1, state)
-
 
 tree = AI_Tree()
 # id ,name ,status ,cost ,state
@@ -191,34 +261,14 @@ state1 = [
     [5, 7, 2],
     [8, 0, 6],
 ]
-
+print(state1, "starting state")
 goalState = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 0],
 ]
 
-state2 = [
-    [4, 1, 3],
-    [5, 7, 2],
-    [8, 0, 6],
-]
-state3 = [
-    [8, 7, 6],
-    [5, 4, 3],
-    [2, 1, 0],
-]
-state4 = [
-    [4, 1, 3],
-    [5, 7, 2],
-    [8, 0, 6],
-]
-
 tree.insert(1, "k", 0, 1, state1)
-tree.generate_children(goalState)
-tree.generate_children(state2)
-tree.generate_children(state2)
-tree.generate_children(state2)
 
 start = timer()
 (id, path) = tree.BFS(goalState)
