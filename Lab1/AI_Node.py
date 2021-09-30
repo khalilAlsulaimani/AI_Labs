@@ -27,15 +27,15 @@ class AI_Node():
             else:
                 self.rightChild = node
 
-    # BFS using queue and recursion
+    # BFS using queue and
     def BFS(self, goal):
         fringe = deque()
         if self:
             fringe.append(self.id)
-
             if self.id == goal:
                 return goal
             fringe.popleft()
+
             if self.leftChild:
                 fringe.append(self.leftChild.id)
                 # print(fringe.__len__())
@@ -52,7 +52,7 @@ class AI_Node():
         if self:
             stack.append(self)
             while len(stack) > 0:
-                #print(stack.__len__())
+                # print(stack.__len__())
                 node = stack.pop()
                 if node is not None:
                     if node.id == goal:
@@ -62,8 +62,6 @@ class AI_Node():
                             stack.append(node.rightChild)
                         if node.leftChild:
                             stack.append(node.leftChild)
-
-
 
     # liner search to find node using id
     def find(self, id):
@@ -90,25 +88,32 @@ class AI_Node():
 
     # finding parent by using find child class to see if parent has those children
     def findParent(self, goal):
-        children = []
+
         if self:
-            children = self.findChildern(self.id)
-            if self.rightChild:
-                if self.rightChild.id == children[0] or (len(children) >= 2 and self.rightChild.id == children[1]):
-                    return self.id
-                if self.leftChild.id == children[0] or (len(children) >= 2 and self.leftChild.id == children[1]):
-                    return self.id
+            (left, right) = self.findChildern(self.id)
+            if goal == right or goal == left:
+                return self.id
+            else:
+                if self.rightChild:
+                    self.rightChild.findParent(goal)
+                if self.leftChild:
+                    self.leftChild.findParent(goal)
 
     # using the find to retrieve its left and right children if they exist
     def findChildern(self, root):
 
         parent = self.find(root)
-        children = []
+        global left
+        global right
         if parent.leftChild:
-            children.append(parent.leftChild.id)
+            left = parent.leftChild.id
+        else:
+            left = None
         if parent.rightChild:
-            children.append(parent.rightChild.id)
-        return children
+            right = parent.rightChild.id
+        else:
+            right = None
+        return left, right
 
 
 class AI_Tree:
@@ -162,7 +167,6 @@ class AI_Tree:
         return self.root.findChildern(goal)
 
 
-
 tree = AI_Tree()
 # id ,name ,status ,cost ,state
 tree.insert(1, "k", 0, 1, 0)
@@ -185,8 +189,8 @@ tree.insert(-11, "kp", 0, 1, 0)
 tree.insert(12, "kp", 0, 1, 0)
 tree.insert(100, "kp", 0, 1, 0)
 
-print("chidlren of node 1 are {}".format(tree.findChildern(1)))
-print("parent of node -1 is {}".format(tree.findParent(-1)))
+print("children of node 4 are {}".format(tree.findChildern(1)))
+print("parent of node -11 is {}".format(tree.findParent(-11)))
 
 start = timer()
 tree.BFS(3)
@@ -206,5 +210,3 @@ print("node 0 name is {}".format(tree.getName(0)))
 print("node 0 status is {}".format(tree.getStatus(0)))
 print("node 0 cost is {}".format(tree.getCost(0)))
 print("node 0 state is {}".format(tree.getState(0)))
-
-
