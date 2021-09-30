@@ -1,25 +1,11 @@
+from collections import deque
 from timeit import default_timer as timer
 
 
-def findZero(state):
-    for row in range(len(state)):
-        for column in range(len(state)):
-            if state[row][column] == 0:
-                return row, column
-
-
-def swap(state, x1, y1, x2, y2):
-    print(x1, y1, x2, y2)
-    temp_puz = state
-    temp = temp_puz[x2][y2]
-    temp_puz[x2][y2] = temp_puz[x1][y1]
-    temp_puz[x1][y1] = temp
-    return temp_puz
-
-
-class AI_Node:
+class Puzzle_Node:
 
     def __init__(self, id, name, status, cost, state):
+        self.nodeCount = 0
         self.name = name
         self.status = status
         self.cost = cost
@@ -28,7 +14,19 @@ class AI_Node:
         self.root = None
         self.leftChild = None
         self.rightChild = None
-        self.nodeCount = 1
+
+    def findZero(self, state):
+        for row in range(len(state)):
+            for column in range(len(state)):
+                if state[row][column] == 0:
+                    return row, column
+
+    def swap(self, state, x1, y1, x2, y2):
+        temp_puz = state
+        temp = temp_puz[x2][y2]
+        temp_puz[x2][y2] = temp_puz[x1][y1]
+        temp_puz[x1][y1] = temp
+        return temp_puz
 
     def insert(self, node):
         if self.id > node.id:
@@ -67,27 +65,31 @@ class AI_Node:
         return newList
 
     def up(self, state, x, y):
-        childState = swap(state, x, y, x - 1, y)
-        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        childState = self.swap(state, x, y, x - 1, y)
+        self.insert(Puzzle_Node(self.nodeCount, "e", 0, 1, childState))
+        self.nodeCount += 1
         return childState
 
     def down(self, state, x, y):
-        childState = swap(state, x, y, x + 1, y)
-        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        childState = self.swap(state, x, y, x + 1, y)
+        self.insert(Puzzle_Node(self.nodeCount, "e", 0, 1, childState))
+        self.nodeCount += 1
         return childState
 
     def right(self, state, x, y):
-        childState = swap(state, 2, 1, 2, 2)
-        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        childState = self.swap(state, 2, 1, 2, 2)
+        self.insert(Puzzle_Node(self.nodeCount, "e", 0, 1, childState))
+        self.nodeCount += 1
         return childState
 
     def left(self, state, x, y):
-        childState = swap(state, x, y, x, y - 1)
-        # self.insert(AI_Node(self.nodeCount, "e", 0, 1, childState))
+        childState = self.swap(state, x, y, x, y - 1)
+        self.insert(Puzzle_Node(self.nodeCount, "e", 0, 1, childState))
+        self.nodeCount += 1
         return childState
 
     def generate_children(self, state):
-        (x, y) = findZero(state)
+        (x, y) = self.findZero(state)
         children = []
 
         stateList1 = []
@@ -131,7 +133,7 @@ class AI_Node:
                     if node.state is not None:
                         if node.state not in visited:
                             if node.check_goal(goal):
-                                return node.state ,visited.__str__()
+                                return node.state, visited.__str__()
                             else:
                                 visited.append(node.state)
                                 queue.append(node.generate_children(node.state))
@@ -140,22 +142,17 @@ class AI_Node:
     def DFS(self, goal):
         stack = []
         visited = []
-        if self and (self.id not in visited):
+        if self:
             stack.append(self)
-            visited.append(self.id)
             while len(stack) > 0:
-                # print(stack.__len__())
                 node = stack.pop()
                 if node is not None:
-                    if node.check_goal(goal):
-                        return node.id, visited.__str__()
-                    else:
-                        if node.rightChild:
-                            stack.append(node.rightChild)
-                            visited.append(node.rightChild.id)
-                        if node.leftChild:
-                            stack.append(node.leftChild)
-                            visited.append(node.leftChild.id)
+                    if node.state not in visited:
+                        if node.check_goal(goal):
+                            return node.state, visited.__str__()
+                        else:
+                            visited.append(node.state)
+                            stack.append(node.generate_children(node.state))
 
     # liner search to find node using id
     def find(self, id):
@@ -202,7 +199,7 @@ class AI_Node:
         return children
 
 
-class AI_Tree:
+class puzzle_Tree:
     def __init__(self):
         self.counter = 1
         self.root = None
@@ -228,7 +225,7 @@ class AI_Tree:
         return node.state
 
     def insert(self, id, name, status, cost, state):
-        node = AI_Node(id, name, status, cost, state)
+        node = Puzzle_Node(id, name, status, cost, state)
         if self.root:
             self.root.insert(node)
         else:
@@ -254,7 +251,7 @@ class AI_Tree:
         return self.root.findChildern(goal)
 
 
-tree = AI_Tree()
+tree = puzzle_Tree()
 # id ,name ,status ,cost ,state
 state1 = [
     [4, 1, 3],
