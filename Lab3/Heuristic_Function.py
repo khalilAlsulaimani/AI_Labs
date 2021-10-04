@@ -33,7 +33,7 @@ class Heuristic_Node:
         for row in range(len(goal)):
             for column in range(len(goal)):
                 x, y = self.findTile(i)
-                if x == -1:
+                if i == 8:
                     break
                 else:
                     distanceX = abs(row - x)
@@ -48,7 +48,7 @@ class Heuristic_Node:
         for row in range(len(goal)):
             distance = 0
             for column in range(len(goal)):
-                if column+1<3:
+                if column + 1 < 3:
                     if self.state[row][column] > goal[row][column + 1]:
                         distance += 1
             permutes += distance
@@ -72,9 +72,9 @@ goal = [
 ]
 
 state1 = [
-    [1, 2, 3],
+    [0, 8, 3],
     [4, 5, 6],
-    [7, 8, 0],
+    [7, 2, 1],
 ]
 
 node1 = Heuristic_Node(0, "one", 0, 0, state1)
