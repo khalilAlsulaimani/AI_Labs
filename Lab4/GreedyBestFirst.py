@@ -126,7 +126,7 @@ class Heuristic_Node:
                     self.rightChild.greedyH1(cost ,h, fringe, goal)
 
                 else:
-                    return "no goal node found", fringe.__str__()
+                    print("no goal node found ", fringe.__str__())
 
     def greedy_best_first_search(self,cost, h, goal):
         if h == 1 or h == 2 or h == 3:
@@ -181,7 +181,7 @@ state4 = [
 
 tree = tree_heuristic()
 tree.insert(0, "first", 0, 0, state1)
-tree.insert(-1, "secound", 0, 0, state2)
-tree.insert(1, "third", 0, 0, goal)
-tree.insert(-2, "fourth", 0, 0, state4)
+tree.insert(-1, "second", 0, 0, state2)
+tree.insert(1, "third", 0, 0, state3)
+tree.insert(2, "fourth", 0, 0, state4)
 tree.greedy_best_first(1, goal)
