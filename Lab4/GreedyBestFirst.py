@@ -100,7 +100,7 @@ class Heuristic_Node:
         if self:
             if self.check_goal(goal):
                 fringe.append(self.state)
-                print("node found ! using h{} node with goal has cost of {} and fringe is {} ".format(h, cost, fringe))
+                print("node found ! using h{} and the fringe contains {} ".format(h, fringe))
             else:
                 fringe.append(self.state)
 
@@ -181,29 +181,54 @@ state4 = [
     [8, 2, 1],
 ]
 
+state5 = [
+    [0, 3, 7],
+    [4, 5, 6],
+    [8, 2, 1],
+]
+state6 = [
+    [0, 7, 8],
+    [4, 5, 6],
+    [3, 1, 2],
+]
+state7 = [
+    [5, 7, 8],
+    [4, 0, 6],
+    [3, 2, 1],
+]
+state8 = [
+    [0, 7, 3],
+    [2, 5, 8],
+    [7, 4, 1],
+]
+ 
 tree = tree_heuristic()
 tree.insert(0, "first", 0, 0, state1)
 tree.insert(-1, "second", 0, 0, state2)
-tree.insert(1, "third", 0, 0, goal)
+tree.insert(1, "third", 0, 0, state3)
 tree.insert(2, "fourth", 0, 0, state4)
+tree.insert(3, "fourth", 0, 0, state5)
+tree.insert(-3, "fourth", 0, 0, state6)
+tree.insert(4, "fourth", 0, 0, state7)
+tree.insert(5, "fourth", 0, 0, goal)
 
 start = timer()
 tree.greedy_best_first(1, goal)
-end  = timer()
+end = timer()
 time = end - start
 
 print("H1 timer : {} ".format(time))
 
 start = timer()
 tree.greedy_best_first(2, goal)
-end  = timer()
+end = timer()
 time = end - start
 
 print("H2 timer : {} ".format(time))
 
 start = timer()
 tree.greedy_best_first(3, goal)
-end  = timer()
+end = timer()
 time = end - start
 
 print("H3 timer : {} ".format(time))
