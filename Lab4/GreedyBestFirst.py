@@ -100,7 +100,7 @@ class Heuristic_Node:
         if self:
             if self.check_goal(goal):
                 fringe.append(self.state)
-                print("node found ! using h{} and the fringe contains {} ".format(h, fringe))
+                print("node found ! using h{} and the fringe contains \n{} ".format(h, fringe))
             else:
                 fringe.append(self.state)
 
@@ -197,11 +197,11 @@ state7 = [
     [3, 2, 1],
 ]
 state8 = [
-    [0, 7, 3],
-    [2, 5, 8],
-    [7, 4, 1],
+    [1, 7, 8],
+    [2, 5, 3],
+    [7, 4, 0],
 ]
- 
+
 tree = tree_heuristic()
 tree.insert(0, "first", 0, 0, state1)
 tree.insert(-1, "second", 0, 0, state2)
@@ -210,7 +210,8 @@ tree.insert(2, "fourth", 0, 0, state4)
 tree.insert(3, "fourth", 0, 0, state5)
 tree.insert(-3, "fourth", 0, 0, state6)
 tree.insert(4, "fourth", 0, 0, state7)
-tree.insert(5, "fourth", 0, 0, goal)
+tree.insert(5, "fourth", 0, 0, state8)
+tree.insert(6,"tenth",0,0,goal)
 
 start = timer()
 tree.greedy_best_first(1, goal)
