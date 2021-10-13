@@ -80,7 +80,7 @@ class Heuristic_Node:
         for row in range(len(goal)):
             distance = 0
             for column in range(len(goal)):
-                if column + 1 < 3:
+                if column + 1 < len(goal):
                     if self.state[row][column] > goal[row][column + 1]:
                         distance += 1
             permutes += distance
@@ -152,54 +152,63 @@ class tree_heuristic:
 
 
 goal = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 0],
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12],
+    [13, 14, 15, 0],
 ]
 
 state1 = [
-    [0, 8, 3],
-    [4, 5, 6],
-    [7, 2, 1],
+    [2, 1, 3, 4],
+    [5, 6, 7, 0],
+    [9, 10, 11, 12],
+    [13, 14, 15, 8],
 ]
 
 state2 = [
-    [3, 8, 0],
-    [4, 5, 6],
-    [7, 2, 1],
+    [1, 2, 3, 9],
+    [5, 0, 7, 8],
+    [4, 10, 11, 6],
+    [12, 13, 14, 15],
 ]
 
 state3 = [
-    [0, 8, 3],
-    [4, 5, 6],
-    [7, 1, 2],
+    [1, 2, 11, 4],
+    [5, 6, 7, 8],
+    [9, 10, 3, 13],
+    [11, 12, 14, 0],
 ]
 
 state4 = [
-    [0, 7, 3],
-    [4, 5, 6],
-    [8, 2, 1],
+    [1, 2, 3, 4],
+    [9, 6, 7, 8],
+    [5, 10, 11, 0],
+    [13, 14, 15, 12],
 ]
 
 state5 = [
-    [0, 3, 7],
-    [4, 5, 6],
-    [8, 2, 1],
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 14, 15, 10],
+    [11, 12, 13, 0],
 ]
 state6 = [
-    [0, 7, 8],
-    [4, 5, 6],
-    [3, 1, 2],
+    [1, 2, 3, 4],
+    [5, 8, 7, 6],
+    [9, 10, 11, 0],
+    [9, 10, 11, 0],
 ]
 state7 = [
-    [5, 7, 8],
-    [4, 0, 6],
-    [3, 2, 1],
+    [1, 9, 3, 4],
+    [8, 6, 7, 5],
+    [2, 10, 11, 12],
+    [13, 14, 15, 0],
 ]
 state8 = [
-    [1, 7, 8],
-    [2, 5, 3],
-    [7, 4, 0],
+    [1, 2, 3, 15],
+    [5, 6, 7, 8],
+    [9, 10, 11, 4],
+    [12, 13, 14, 0],
 ]
 
 tree = tree_heuristic()
@@ -207,11 +216,10 @@ tree.insert(0, "first", 0, 0, state1)
 tree.insert(-1, "second", 0, 0, state2)
 tree.insert(1, "third", 0, 0, state3)
 tree.insert(2, "fourth", 0, 0, state4)
-tree.insert(3, "fourth", 0, 0, state5)
+tree.insert(3, "fourth", 0, 0, goal)
 tree.insert(-3, "fourth", 0, 0, state6)
 tree.insert(4, "fourth", 0, 0, state7)
 tree.insert(5, "fourth", 0, 0, state8)
-tree.insert(6,"tenth",0,0,goal)
 
 start = timer()
 tree.greedy_best_first(1, goal)
