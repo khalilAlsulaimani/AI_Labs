@@ -1,3 +1,7 @@
+from collections import defaultdict
+from queue import PriorityQueue
+
+
 class Vertex:
     def __init__(self, n):
         self.name = n
@@ -8,6 +12,10 @@ class Graph:
     edges = []
     edge_indices = {}
 
+    def __init__(self):
+        self.num_of_vertices = 0
+        self.visited = []
+
     def add_vertex(self, vertex):
         if isinstance(vertex, Vertex) and vertex.name not in self.vertices:
             self.vertices[vertex.name] = vertex
@@ -15,6 +23,7 @@ class Graph:
                 row.append(0)
             self.edges.append([0] * (len(self.edges) + 1))
             self.edge_indices[vertex.name] = len(self.edge_indices)
+            self.num_of_vertices += 1
             return True
         else:
             return False
@@ -23,7 +32,7 @@ class Graph:
 
         if u in self.vertices and v in self.vertices:
             self.edges[self.edge_indices[u]][self.edge_indices[v]] = weight
-            #print(u , v , " cost is " ,weight)
+            # print(u , v , " cost is " ,weight)
             self.edges[self.edge_indices[v]][self.edge_indices[u]] = weight
             return True
         else:
@@ -39,21 +48,42 @@ class Graph:
                 print(" ", self.edges[v][j], end="")
             print("")
 
-    def oneRowDicretion(self, row):
+    def stateLineDistance(self, row):
         count = 0
         for i in range(len(self.edges)):
             count += self.edges[row][i]
 
         return count
 
+    def dijkstra(self, start_vertex):
+        D = {v: float('inf') for v in range(self.num_of_vertices)}
+        D[start_vertex] = 0
+
+        pq = PriorityQueue()
+        pq.put((0, start_vertex))
+
+        while not pq.empty():
+            (dist, current_vertex) = pq.get()
+            self.visited.append(current_vertex)
+
+            for neighbor in range(self.num_of_vertices):
+                if self.edges[current_vertex][neighbor] != -1:
+                    distance = self.edges[current_vertex][neighbor]
+                    if neighbor not in self.visited:
+                        old_cost = D[neighbor]
+                        new_cost = D[current_vertex] + distance
+                        if new_cost < old_cost:
+                            pq.put((new_cost, neighbor))
+                            D[neighbor] = new_cost
+        return D
+
 
 g = Graph()
 
-a = Vertex('A')
+a = Vertex(0)
 g.add_vertex(a)
-g.add_vertex(Vertex('B'))
 
-for i in range(1, 20):
+for i in range(1, 21):
     g.add_vertex(Vertex(i))
 
 edges = [
@@ -88,5 +118,7 @@ edges = [
 for edge in edges:
     g.add_edge(edge[0], edge[1], edge[2])
 
-print(g.oneRowDicretion(2))
-g.print_graph()
+D = g.dijkstra(1)
+
+for vertex in range(len(D)):
+    print("Distance from vertex 1 to vertex", vertex, "is", D[vertex])
