@@ -1,3 +1,4 @@
+from cmath import sqrt
 from collections import defaultdict
 from queue import PriorityQueue
 
@@ -5,6 +6,14 @@ from queue import PriorityQueue
 class Vertex:
     def __init__(self, n):
         self.name = n
+
+
+def diogonalDistance(start_vertex, goal_vertex):
+    D = 1
+    D2 = 1.41421356237
+    dx = abs(start_vertex - goal_vertex)
+    dy = abs(start_vertex - goal_vertex)
+    return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
 
 
 class Graph:
@@ -50,32 +59,43 @@ class Graph:
 
     def stateLineDistance(self, row):
         count = 0
-        for i in range(len(self.edges)):
-            count += self.edges[row][i]
+        for t in range(len(self.edges)):
+            if isinstance(row, int):
+                count += self.edges[row][t]
 
         return count
 
-    def dijkstra(self, start_vertex):
-        D = {v: float('inf') for v in range(self.num_of_vertices)}
-        D[start_vertex] = 0
+    def A_Star(self, start, goal):
+        open_list = []
+        closed_list = []
 
-        pq = PriorityQueue()
-        pq.put((0, start_vertex))
+        open_list.append(start)
+        while len(open_list) > 0:
+            current_vertex = open_list.pop(0)
+            print(current_vertex)
+            if current_vertex == goal:
+                closed_list.append(current_vertex)
+                return closed_list[::-1]
+            else:
+                closed_list.append(current_vertex)
+                temp = {}
+                for i in range(len(self.edges)):
+                    for j in range(len(self.edges)):
+                        edge = self.edges[i][j]
 
-        while not pq.empty():
-            (dist, current_vertex) = pq.get()
-            self.visited.append(current_vertex)
+                        if edge != 0 and edge not in closed_list:
+                            distance = diogonalDistance(edge, goal)
+                            fN = distance + self.stateLineDistance(edge)
+                            temp[edge] = fN
 
-            for neighbor in range(self.num_of_vertices):
-                if self.edges[current_vertex][neighbor] != -1:
-                    distance = self.edges[current_vertex][neighbor]
-                    if neighbor not in self.visited:
-                        old_cost = D[neighbor]
-                        new_cost = D[current_vertex] + distance
-                        if new_cost < old_cost:
-                            pq.put((new_cost, neighbor))
-                            D[neighbor] = new_cost
-        return D
+
+                smallest = min(temp, key=temp.get)
+                keys = self.edges[0][0]
+                for key, value in temp.items():
+                    if value == smallest:
+                        keys = key
+
+                open_list.append(keys)
 
 
 g = Graph()
@@ -118,7 +138,5 @@ edges = [
 for edge in edges:
     g.add_edge(edge[0], edge[1], edge[2])
 
-D = g.dijkstra(1)
-
-for vertex in range(len(D)):
-    print("Distance from vertex 1 to vertex", vertex, "is", D[vertex])
+path = g.A_Star(1, 2)
+print(path)
