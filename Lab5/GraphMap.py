@@ -78,17 +78,12 @@ class Graph:
                 if self.edges[u][v] > 0 and sptSet[v] == False and dist[v] > dist[u] + self.edges[u][v]:
                     dist[v] = dist[u] + self.edges[u][v]
 
-
-
-
-
-
         return dist
 
     def A_Star(self, start, goal):
         open_list = []
         closed_list = []
-        distance = self.dijkstra(start)
+        dijkster = self.dijkstra(start)
 
         open_list.append(start)
         while len(open_list) > 0:
@@ -99,25 +94,19 @@ class Graph:
             else:
                 if current_vertex not in closed_list:
                     closed_list.append(current_vertex)
+
                 temp = {}
                 for i in range(len(self.edges)):
                     for j in range(len(self.edges)):
                         edge = self.edges[i][j]
 
                         if edge != 0 and edge not in closed_list:
-                            dist = distance[j]
-                            print("i" ,i,dist)
-                            fN = dist + self.stateLineDistance(edge)
+                            fN = dijkster[j] + self.stateLineDistance(j)
                             temp[i] = fN
-                            open_list.append(i)
-
+                            open_list.append(j)
                 smallest = min(temp, key=temp.get)
-                keys = 0
-                for key, value in temp.items():
-                    if value == smallest:
-                        keys = key
 
-                open_list.append(keys)
+                open_list.append(temp[smallest])
 
 
 g = Graph()
@@ -160,5 +149,5 @@ edges = [
 for edge in edges:
     g.add_edge(edge[0], edge[1], edge[2])
 
-path = g.A_Star(1, 20)
+path = g.A_Star(1, 10)
 print("goal found and its path is : ", path)
