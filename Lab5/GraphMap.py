@@ -1,19 +1,9 @@
-from cmath import sqrt
-from collections import defaultdict
-from queue import PriorityQueue
+import sys
 
 
 class Vertex:
     def __init__(self, n):
         self.name = n
-
-
-def diogonalDistance(start_vertex, goal_vertex):
-    D = 1
-    D2 = 1.41421356237
-    dx = abs(start_vertex - goal_vertex)
-    dy = abs(start_vertex - goal_vertex)
-    return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
 
 
 class Graph:
@@ -23,7 +13,6 @@ class Graph:
 
     def __init__(self):
         self.num_of_vertices = 0
-        self.visited = []
 
     def add_vertex(self, vertex):
         if isinstance(vertex, Vertex) and vertex.name not in self.vertices:
@@ -65,32 +54,65 @@ class Graph:
 
         return count
 
+    def minDistance(self, dist, sptSet):
+        global min_index
+        min = sys.maxsize
+        for v in range(self.num_of_vertices):
+            if dist[v] < min and sptSet[v] == False:
+                min = dist[v]
+                min_index = v
+        return min_index
+
+    def dijkstra(self, src):
+        dist = [sys.maxsize] * self.num_of_vertices
+        dist[src] = 0
+        sptSet = [False] * self.num_of_vertices
+        count = 0
+
+        for cout in range(self.num_of_vertices):
+            u = self.minDistance(dist, sptSet)
+
+            sptSet[u] = True
+
+            for v in range(self.num_of_vertices):
+                if self.edges[u][v] > 0 and sptSet[v] == False and dist[v] > dist[u] + self.edges[u][v]:
+                    dist[v] = dist[u] + self.edges[u][v]
+
+
+
+
+
+
+        return dist
+
     def A_Star(self, start, goal):
         open_list = []
         closed_list = []
+        distance = self.dijkstra(start)
 
         open_list.append(start)
         while len(open_list) > 0:
             current_vertex = open_list.pop(0)
-            print(current_vertex)
             if current_vertex == goal:
                 closed_list.append(current_vertex)
-                return closed_list[::-1]
+                return closed_list
             else:
-                closed_list.append(current_vertex)
+                if current_vertex not in closed_list:
+                    closed_list.append(current_vertex)
                 temp = {}
                 for i in range(len(self.edges)):
                     for j in range(len(self.edges)):
                         edge = self.edges[i][j]
 
                         if edge != 0 and edge not in closed_list:
-                            distance = diogonalDistance(edge, goal)
-                            fN = distance + self.stateLineDistance(edge)
-                            temp[edge] = fN
-
+                            dist = distance[j]
+                            print("i" ,i,dist)
+                            fN = dist + self.stateLineDistance(edge)
+                            temp[i] = fN
+                            open_list.append(i)
 
                 smallest = min(temp, key=temp.get)
-                keys = self.edges[0][0]
+                keys = 0
                 for key, value in temp.items():
                     if value == smallest:
                         keys = key
@@ -138,5 +160,5 @@ edges = [
 for edge in edges:
     g.add_edge(edge[0], edge[1], edge[2])
 
-path = g.A_Star(1, 2)
-print(path)
+path = g.A_Star(1, 20)
+print("goal found and its path is : ", path)
