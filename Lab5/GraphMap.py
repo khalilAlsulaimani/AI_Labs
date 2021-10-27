@@ -92,6 +92,7 @@ class Graph:
                 closed_list.append(current_vertex)
                 return closed_list
             else:
+
                 if current_vertex not in closed_list:
                     closed_list.append(current_vertex)
 
@@ -99,14 +100,14 @@ class Graph:
                 for i in range(len(self.edges)):
                     for j in range(len(self.edges)):
                         edge = self.edges[i][j]
-
-                        if edge != 0 and edge not in closed_list:
+                        if edge != 0 and i not in closed_list:
                             fN = dijkster[j] + self.stateLineDistance(j)
                             temp[i] = fN
                             open_list.append(j)
-                smallest = min(temp, key=temp.get)
 
+                smallest = min(temp, key=temp.get)
                 open_list.append(temp[smallest])
+                # print(open_list)
 
 
 g = Graph()
@@ -149,5 +150,7 @@ edges = [
 for edge in edges:
     g.add_edge(edge[0], edge[1], edge[2])
 
-path = g.A_Star(1, 10)
-print("goal found and its path is : ", path)
+start = 1
+end = 10
+path = g.A_Star(start, end)
+print("start node is ", start, " goal node is ", end, " and goal found and its path is : ", path)
